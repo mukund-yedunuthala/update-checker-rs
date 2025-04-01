@@ -1,25 +1,22 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en">
-    <head>
-        <meta charset="UTF-8" />
-        <link rel="stylesheet" href="styles.css" />
-        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-        <title>Update checker</title>
-        <script type="module" src="/main.js" defer></script>
-    </head>
+<head>
+    <meta charset="UTF-8" />
+    <link rel="stylesheet" href="styles.css" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Update checker</title>
+    <script type="module" src="/main.js" defer></script>
+<body>
+    <h1>GitHub Release Tracker</h1>
 
-    <body>
-        <main class="container">
-            <h1>Git release checker</h1>
-            <p>Enter url to see if it has an update</p>
-            <form class="row" id="update-check-form">
-                <input
-                    id="update-check-input"
-                    placeholder="Enter Git forge URL:"
-                />
-                <button type="submit">Check</button>
-            </form>
-            <p id="update-check-msg"></p>
-        </main>
-    </body>
+    <input type="text" id="repo-url" placeholder="Enter GitHub repo URL">
+    <button id="check-update">Check for Updates</button>
+
+    <p id="message"></p>
+
+    <h2>Tracked Repositories</h2>
+    <div id="repo-list">
+        <p>Loading repositories...</p>
+    </div>
+</body>
 </html>
