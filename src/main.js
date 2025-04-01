@@ -1,54 +1,81 @@
 const { invoke } = window.__TAURI__.core;
 
-document.addEventListener("DOMContentLoaded", async () => {
-  const urlInput = document.getElementById("repo-url");
-  const checkButton = document.getElementById("check-update");
-  const message = document.getElementById("message");
-  const repoList = document.getElementById("repo-list");
+// Function to load and display stored repositories
+async function loadRepos() {
+  try {
+    const repos = await invoke("get_stored_repos");
+    const repoList = document.getElementById("repo-list");
+    repoList.innerHTML = ""; // Clear the existing list
 
-  // Function to fetch and display stored repos
-  async function loadRepos() {
-    try {
-      const repos = await invoke("get_stored_repos");
-      repoList.innerHTML = ""; // Clear previous entries
+    repos.forEach((repo) => {
+      const repoDiv = document.createElement("div");
+      repoDiv.classList.add("repo-item");
 
-      if (repos.length === 0) {
-        repoList.innerHTML = "<p>No repositories tracked yet.</p>";
-        return;
-      }
+      // Repo URL
+      const repoText = document.createElement("span");
+      repoText.textContent = `${repo.url} (Latest: ${repo.latest_release})`;
 
-      repos.forEach((repo) => {
-        const repoItem = document.createElement("div");
-        repoItem.classList.add("repo-item");
-        repoItem.innerHTML = `<strong>${repo.url}</strong> - Latest Release: ${repo.latest_release}`;
-        repoList.appendChild(repoItem);
-      });
-    } catch (error) {
-      console.error("Error loading repos:", error);
-      repoList.innerHTML = "<p>Failed to load repositories.</p>";
-    }
+      // Check button
+      const checkButton = document.createElement("button");
+      checkButton.textContent = "Check";
+      checkButton.onclick = async () => {
+        await checkForUpdate(repo.url, checkButton);
+      };
+
+      repoDiv.appendChild(repoText);
+      repoDiv.appendChild(checkButton);
+      repoList.appendChild(repoDiv);
+    });
+  } catch (error) {
+    console.error("Failed to load repositories:", error);
   }
+}
 
-  // Fetch stored repositories on page load
-  await loadRepos();
+// Function to add a new repository
+async function addRepository() {
+  const urlInput = document.getElementById("repo-url");
+  const repoUrl = urlInput.value.trim();
+  if (!repoUrl) return alert("Please enter a valid GitHub URL.");
 
-  checkButton.addEventListener("click", async () => {
-    const url = urlInput.value.trim();
-    if (!url) {
-      message.textContent = "Please enter a valid GitHub repo URL.";
-      return;
+  try {
+    const isNew = await invoke("check_for_update", { url: repoUrl });
+    if (isNew) {
+      alert(`Repository ${repoUrl} added successfully!`);
+    } else {
+      alert(`Repository ${repoUrl} is already up to date.`);
     }
+    urlInput.value = ""; // Clear input
+    loadRepos(); // Refresh list
+  } catch (error) {
+    console.error("Error adding repository:", error);
+    alert("Failed to add repository.");
+  }
+}
 
-    try {
-      const isNew = await invoke("check_for_update", { url });
-      message.textContent = isNew
-        ? "A new release is available!"
-        : "You're up to date.";
+// Function to check for updates on a single repo
+async function checkForUpdate(repoUrl, button) {
+  button.disabled = true; // Disable button during the check
+  button.textContent = "Checking...";
 
-      await loadRepos(); // Refresh stored repo list after checking
-    } catch (error) {
-      console.error("Error checking update:", error);
-      message.textContent = "Error checking update.";
+  try {
+    const isNew = await invoke("check_for_update", { url: repoUrl });
+    if (isNew) {
+      alert(`New update found for ${repoUrl}!`);
+    } else {
+      alert(`No new updates for ${repoUrl}.`);
     }
-  });
-});
+    loadRepos(); // Refresh UI
+  } catch (error) {
+    console.error("Error checking update:", error);
+    alert("Failed to check update.");
+  } finally {
+    button.disabled = false;
+    button.textContent = "Check";
+  }
+}
+
+// Attach event listener to the "Add Repository" button
+document.getElementById("add-repo").addEventListener("click", addRepository);
+
+// Load repos on startup
+window.addEventListener("DOMContentLoaded", loadRepos);
