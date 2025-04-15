@@ -9,8 +9,10 @@ use tauri::State;
 #[derive(Serialize, Deserialize, Debug, Clone)]
 struct RepoInfo {
     url: String,
-    latest_release: String,
+    system_version: String,
+    web_version: String,
 }
+
 type RepoDatabase = HashMap<String, RepoInfo>;
 
 #[tauri::command]
@@ -48,25 +50,28 @@ async fn check_for_update(url: String, state: State<'_, AppState>) -> Result<boo
 
     let mut data = state.repos.lock().unwrap();
 
-    // 🔹 Check if repo already exists
-    let existing_entry = data.get(&url).cloned(); // Clone to avoid borrowing issues
-
-    let is_new = match existing_entry {
-        Some(repo_info) => repo_info.latest_release != latest_release,
-        None => true, // If it doesn't exist, treat it as new
+    let is_new = match data.get_mut(&url) {
+        Some(existing_repo) => {
+            let updated = existing_repo.web_version != latest_release;
+            if updated {
+                existing_repo.web_version = latest_release.clone();
+                save_data(&data);
+            }
+            updated
+        }
+        None => {
+            data.insert(
+                url.clone(),
+                RepoInfo {
+                    url: url.clone(),
+                    system_version: latest_release.clone(),
+                    web_version: latest_release.clone(),
+                },
+            );
+            save_data(&data);
+            false
+        }
     };
-
-    // 🔹 Update or insert into the database
-    if is_new {
-        data.insert(
-            url.clone(),
-            RepoInfo {
-                url: url.clone(),
-                latest_release: latest_release.clone(),
-            },
-        );
-        save_data(&data);
-    }
 
     Ok(is_new)
 }
@@ -76,6 +81,18 @@ fn get_stored_repos(state: State<'_, AppState>) -> Result<Vec<RepoInfo>, String>
     let data = state.repos.lock().unwrap();
     let repos_list: Vec<RepoInfo> = data.values().cloned().collect();
     Ok(repos_list)
+}
+
+#[tauri::command]
+fn mark_as_updated(url: String, state: State<'_, AppState>) -> Result<(), String> {
+    let mut data = state.repos.lock().unwrap();
+    if let Some(repo) = data.get_mut(&url) {
+        repo.system_version = repo.web_version.clone();
+        save_data(&data);
+        Ok(())
+    } else {
+        Err("Repository not found".to_string())
+    }
 }
 
 fn save_data(data: &RepoDatabase) {
@@ -102,7 +119,11 @@ pub fn run() {
     tauri::Builder::default()
         .manage(state)
         .plugin(tauri_plugin_opener::init())
-        .invoke_handler(tauri::generate_handler![check_for_update, get_stored_repos])
+        .invoke_handler(tauri::generate_handler![
+            check_for_update,
+            get_stored_repos,
+            mark_as_updated
+        ])
         .run(tauri::generate_context!())
         .expect("error while running tauri application");
 }

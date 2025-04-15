@@ -11,19 +11,28 @@ async function loadRepos() {
       const repoDiv = document.createElement("div");
       repoDiv.classList.add("repo-item");
 
-      // Repo URL
+      // Repo URL and versions
       const repoText = document.createElement("span");
-      repoText.textContent = `${repo.url} (Latest: ${repo.latest_release})`;
+      repoText.textContent = `${repo.url} System: ${repo.system_version} | Web: ${repo.web_version}`;
 
-      // Check button
-      const checkButton = document.createElement("button");
-      checkButton.textContent = "Check";
-      checkButton.onclick = async () => {
-        await checkForUpdate(repo.url, checkButton);
-      };
+      // Determine button type
+      const button = document.createElement("button");
+      if (repo.system_version !== repo.web_version) {
+        button.textContent = "Update";
+        button.classList.add("update-btn");
+        button.onclick = async () => {
+          await markAsUpdated(repo.url, button);
+        };
+      } else {
+        button.textContent = "Check";
+        button.classList.add("check-btn");
+        button.onclick = async () => {
+          await checkForUpdate(repo.url, button);
+        };
+      }
 
       repoDiv.appendChild(repoText);
-      repoDiv.appendChild(checkButton);
+      repoDiv.appendChild(button);
       repoList.appendChild(repoDiv);
     });
   } catch (error) {
@@ -40,7 +49,7 @@ async function addRepository() {
   try {
     const isNew = await invoke("check_for_update", { url: repoUrl });
     if (isNew) {
-      alert(`Repository ${repoUrl} added successfully!`);
+      alert(`Repository ${repoUrl} has a newer release.`);
     } else {
       alert(`Repository ${repoUrl} is already up to date.`);
     }
@@ -54,7 +63,7 @@ async function addRepository() {
 
 // Function to check for updates on a single repo
 async function checkForUpdate(repoUrl, button) {
-  button.disabled = true; // Disable button during the check
+  button.disabled = true;
   button.textContent = "Checking...";
 
   try {
@@ -64,13 +73,31 @@ async function checkForUpdate(repoUrl, button) {
     } else {
       alert(`No new updates for ${repoUrl}.`);
     }
-    loadRepos(); // Refresh UI
+    loadRepos();
   } catch (error) {
     console.error("Error checking update:", error);
     alert("Failed to check update.");
   } finally {
     button.disabled = false;
     button.textContent = "Check";
+  }
+}
+
+// Function to mark a repo as updated (sync system version with web version)
+async function markAsUpdated(repoUrl, button) {
+  button.disabled = true;
+  button.textContent = "Updating...";
+
+  try {
+    await invoke("mark_as_updated", { url: repoUrl });
+    alert(`${repoUrl} marked as updated.`);
+    loadRepos();
+  } catch (error) {
+    console.error("Error marking update:", error);
+    alert("Failed to mark as updated.");
+  } finally {
+    button.disabled = false;
+    button.textContent = "Update";
   }
 }
 

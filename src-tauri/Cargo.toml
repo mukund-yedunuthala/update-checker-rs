@@ -1,6 +1,6 @@
 [package]
 name = "update-checker-rs"
-version = "0.1.1"
+version = "0.1.2"
 description = "update-checker-rs is a lightweight desktop app that tracks the latest releases of GitHub repositories. Built with Tauri, Rust, and JavaScript, it allows users to add repositories, check for updates, and store data locally"
 authors = ["Mukund Yedunuthala"]
 edition = "2024"
