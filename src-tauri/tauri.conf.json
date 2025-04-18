@@ -10,9 +10,9 @@
     "withGlobalTauri": true,
     "windows": [
       {
-        "title": "update-checker-rs",
-        "width": 800,
-        "height": 600
+        "title": "GitHub Release Tracker",
+        "width": 1024,
+        "height": 768
       }
     ],
     "security": {
