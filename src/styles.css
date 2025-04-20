@@ -1,62 +1,78 @@
-/* 🌟 General Styling */
-:root {
-    font-family: "Inter", "Avenir", Helvetica, Arial, sans-serif;
-    font-size: 16px;
-    font-weight: 400;
-    color: #ffffff;
-    background: linear-gradient(135deg, #1e1e2f, #2a2a3d);
-    text-rendering: optimizeLegibility;
-    -webkit-font-smoothing: antialiased;
-    -moz-osx-font-smoothing: grayscale;
-}
-
-/* 🌟 Main container */
 .container {
-    max-width: 600px;
-    margin: 5vh auto;
-    padding: 20px;
-    text-align: center;
-    background: rgba(255, 255, 255, 0.05);
+    max-width: 800px;
+    margin: 2vh auto;
+    padding: 30px;
+    background: rgba(
+        255,
+        255,
+        255,
+        0.05
+    ); /* Ensure container background is still there */
     border-radius: 12px;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+    text-align: center; /* Ensure text alignment is still applied */
 }
 
-/* 🌟 Header */
 h1 {
-    font-size: 1.8em;
-    font-weight: bold;
+    font-size: 2.2em;
+    margin-bottom: 15px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    color: #00d4ff; /* Ensure header color is still there */
+}
+
+h1 img {
+    height: 1.5em;
+    width: auto;
+}
+
+#add-repo-form {
+    display: flex;
+    gap: 10px;
     margin-bottom: 20px;
-    color: #00d4ff;
 }
 
-/* 🌟 Input Field */
-input {
-    width: 80%;
-    padding: 10px;
-    border: 2px solid #7b68ee;
+#add-repo-form input {
+    flex-grow: 1;
+    padding: 12px;
+    font-size: 1.1em;
+    border: 2px solid #7b68ee; /* Ensure input border is still there */
     border-radius: 8px;
-    font-size: 1em;
-    color: #ffffff;
-    background: rgba(255, 255, 255, 0.1);
-    transition: 0.3s;
+    color: #ffffff; /* Ensure input text color is still there */
+    background: rgba(
+        255,
+        255,
+        255,
+        0.1
+    ); /* Ensure input background is still there */
+    transition: 0.3s; /* Ensure input transition is still there */
 }
 
-input:focus {
-    border-color: #00d4ff;
+#add-repo-form input:focus {
+    border-color: #00d4ff; /* Ensure input focus border color is still there */
     outline: none;
-    background: rgba(255, 255, 255, 0.2);
+    background: rgba(
+        255,
+        255,
+        255,
+        0.2
+    ); /* Ensure input focus background is still there */
 }
 
-/* 🌟 Base Button Styles */
 button {
-    padding: 10px 15px;
-    margin-top: 10px;
-    font-size: 1em;
+    padding: 12px 15px;
+    margin-top: 0;
+    font-size: 1.1em;
     font-weight: bold;
     border: none;
     border-radius: 8px;
     cursor: pointer;
     transition: all 0.3s ease;
+    height: auto;
+    /* ADD BACK THE BASE BUTTON BACKGROUND */
+    background: linear-gradient(135deg, #ddd, #eee); /* A very light default */
+    color: #333; /* A dark default text color */
 }
 
 #add-repo {
@@ -68,39 +84,48 @@ button {
     background: linear-gradient(135deg, #6a5acd, #5a4fb0);
 }
 
-/* 🌟 Repo List */
 .repo-item {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    background: rgba(255, 255, 255, 0.08);
-    padding: 12px;
-    margin: 12px 0;
+    background: rgba(
+        255,
+        255,
+        255,
+        0.08
+    ); /* Ensure repo item background is still there */
+    padding: 10px 15px;
+    margin: 8px 0;
     border-radius: 8px;
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
     transition: 0.3s;
 }
 
 .repo-item:hover {
-    background: rgba(255, 255, 255, 0.15);
+    background: rgba(
+        255,
+        255,
+        255,
+        0.15
+    ); /* Ensure repo item hover background is still there */
 }
 
-/* 🌟 Repo Text */
 .repo-item span {
-    flex-grow: 1;
+    flex-grow: 2;
     text-align: left;
-    padding: 0 10px;
-    color: #e6e6e6;
+    padding-right: 15px;
+    color: #e6e6e6; /* Ensure span color is still there */
+    font-size: 1.1em;
 }
 
-/* 🌟 Check and Update Buttons */
 .repo-item .check-btn,
 .repo-item .update-btn {
     background: linear-gradient(135deg, #00d4ff, #008cff);
     color: white;
     font-weight: bold;
-    padding: 8px 12px;
-    margin-left: 5px; /* Add some spacing between buttons */
+    padding: 10px 12px;
+    margin-left: 5px;
+    height: auto;
 }
 
 .repo-item .check-btn:hover,
@@ -108,27 +133,19 @@ button {
     background: linear-gradient(135deg, #008cff, #0066cc);
 }
 
-/* 🌟 Delete Button */
 .delete-btn {
-    background: linear-gradient(
-        135deg,
-        #ff6b6b,
-        #ff0000
-    ); /* Reddish gradient for delete */
+    background: linear-gradient(135deg, #ff6b6b, #ff0000);
     color: white;
     font-weight: bold;
-    padding: 8px 12px; /* Consistent padding */
+    padding: 10px 12px;
     cursor: pointer;
-    margin-right: 10px; /* Add spacing to the right of the delete button */
-    margin-left: 0; /* Override potential general left margin */
+    margin-right: 10px;
+    margin-left: 0;
+    height: auto;
 }
 
 .delete-btn:hover {
-    background: linear-gradient(
-        135deg,
-        #ff0000,
-        #cc0000
-    ); /* Darker red on hover */
+    background: linear-gradient(135deg, #ff0000, #cc0000);
 }
 
 /* 🌟 Dark Mode Fix */
