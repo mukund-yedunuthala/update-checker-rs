@@ -1,16 +1,76 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8" />
-    <link rel="stylesheet" href="styles.css" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Update checker</title>
-    <script type="module" src="/main.js" defer></script>
-<body>
-    <h1>GitHub Release Tracker</h1>
+    <head>
+        <meta charset="UTF-8" />
+        <link rel="stylesheet" href="styles.css" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>Update checker</title>
+        <script type="module" src="/main.js" defer></script>
+        <style>
+            .container {
+                max-width: 900px; /* Wider container for desktop */
+                margin: 2vh auto; /* Less top/bottom margin */
+                padding: 30px; /* Slightly more padding */
+                /* ... other container styles ... */
+            }
 
-    <button id="add-repo">Add Repository</button>
-    <input type="text" id="repo-url" placeholder="Enter GitHub repo URL">
-    <div id="repo-list"></div>
-</body>
+            h1 {
+                font-size: 2.2em; /* Slightly larger headline */
+                margin-bottom: 15px; /* Less bottom margin */
+                display: flex; /* Enable flexbox for logo and text alignment */
+                align-items: center; /* Vertically align logo and text */
+                gap: 10px; /* Space between logo and text */
+            }
+
+            h1 img {
+                height: 1.5em; /* Adjust logo size relative to font size */
+                width: auto;
+            }
+
+            #add-repo-form {
+                display: flex; /* Align input and button horizontally */
+                gap: 10px; /* Space between input and button */
+                margin-bottom: 20px; /* Add some space below the form */
+            }
+
+            #add-repo-form input {
+                flex-grow: 1; /* Allow input to take up remaining space */
+            }
+
+            .repo-item {
+                /* ... other repo-item styles ... */
+                margin: 8px 0; /* Less vertical margin between items */
+                padding: 10px; /* Slightly less padding inside items */
+            }
+
+            h2 {
+                font-size: 1.4em;
+                margin-top: 20px; /* Add some space above the list heading */
+                margin-bottom: 10px;
+            }
+        </style>
+    </head>
+    <body>
+        <div class="container">
+            <h1>
+                <img src="assets/app-icon.svg" alt="App Logo" />
+                GitHub Release Tracker
+            </h1>
+
+            <form id="add-repo-form">
+                <label for="repo-url" style="display: none"
+                    >GitHub Repository URL:</label
+                >
+                <input
+                    type="text"
+                    id="repo-url"
+                    placeholder="Enter GitHub repo URL"
+                />
+                <button type="button" id="add-repo">Add Repository</button>
+            </form>
+
+            <h2>Tracked Repositories</h2>
+            <div id="repo-list"></div>
+        </div>
+    </body>
 </html>
