@@ -165,6 +165,18 @@ fn mark_as_updated(url: String, app: AppHandle) -> Result<(), String> {
     }
 }
 
+#[tauri::command]
+fn delete_entry(url: String, app: AppHandle) -> Result<(), String> {
+    let store_obj = app.get_store("repos.json");
+    match store_obj {
+        Some(store) => {
+            store.delete(&url);
+            Ok(())
+        }
+        _ => Err("Failed getting list of repos".to_string()),
+    }
+}
+
 #[cfg_attr(mobile, tauri::mobile_entry_point)]
 pub fn run() {
     tauri::Builder::default()
@@ -177,7 +189,8 @@ pub fn run() {
         .invoke_handler(tauri::generate_handler![
             check_for_update,
             get_stored_repos,
-            mark_as_updated
+            mark_as_updated,
+            delete_entry
         ])
         .run(tauri::generate_context!())
         .expect("error while running tauri application");

@@ -47,7 +47,7 @@ input:focus {
     background: rgba(255, 255, 255, 0.2);
 }
 
-/* 🌟 Buttons */
+/* 🌟 Base Button Styles */
 button {
     padding: 10px 15px;
     margin-top: 10px;
@@ -93,16 +93,42 @@ button {
     color: #e6e6e6;
 }
 
-/* 🌟 Check Button */
-.repo-item button {
+/* 🌟 Check and Update Buttons */
+.repo-item .check-btn,
+.repo-item .update-btn {
     background: linear-gradient(135deg, #00d4ff, #008cff);
     color: white;
     font-weight: bold;
     padding: 8px 12px;
+    margin-left: 5px; /* Add some spacing between buttons */
 }
 
-.repo-item button:hover {
+.repo-item .check-btn:hover,
+.repo-item .update-btn:hover {
     background: linear-gradient(135deg, #008cff, #0066cc);
+}
+
+/* 🌟 Delete Button */
+.delete-btn {
+    background: linear-gradient(
+        135deg,
+        #ff6b6b,
+        #ff0000
+    ); /* Reddish gradient for delete */
+    color: white;
+    font-weight: bold;
+    padding: 8px 12px; /* Consistent padding */
+    cursor: pointer;
+    margin-right: 10px; /* Add spacing to the right of the delete button */
+    margin-left: 0; /* Override potential general left margin */
+}
+
+.delete-btn:hover {
+    background: linear-gradient(
+        135deg,
+        #ff0000,
+        #cc0000
+    ); /* Darker red on hover */
 }
 
 /* 🌟 Dark Mode Fix */

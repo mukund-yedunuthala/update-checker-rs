@@ -16,23 +16,31 @@ async function loadRepos() {
       repoText.textContent = `${repo.url} System: ${repo.system_version} | Web: ${repo.web_version}`;
 
       // Determine button type
-      const button = document.createElement("button");
+      const actionButton = document.createElement("button"); // Renamed for clarity
       if (repo.system_version !== repo.web_version) {
-        button.textContent = "Update";
-        button.classList.add("update-btn");
-        button.onclick = async () => {
-          await markAsUpdated(repo.url, button);
+        actionButton.textContent = "Update";
+        actionButton.classList.add("update-btn");
+        actionButton.onclick = async () => {
+          await markAsUpdated(repo.url, actionButton);
         };
       } else {
-        button.textContent = "Check";
-        button.classList.add("check-btn");
-        button.onclick = async () => {
-          await checkForUpdate(repo.url, button);
+        actionButton.textContent = "Check";
+        actionButton.classList.add("check-btn");
+        actionButton.onclick = async () => {
+          await checkForUpdate(repo.url, actionButton);
         };
       }
 
+      const deleteButton = document.createElement("button");
+      deleteButton.textContent = "Delete";
+      deleteButton.classList.add("delete-btn"); // Add the delete-btn class
+      deleteButton.onclick = async () => {
+        await deleteEntry(repo.url, deleteButton);
+      };
+
       repoDiv.appendChild(repoText);
-      repoDiv.appendChild(button);
+      repoDiv.appendChild(deleteButton);
+      repoDiv.appendChild(actionButton);
       repoList.appendChild(repoDiv);
     });
   } catch (error) {
@@ -99,6 +107,23 @@ async function markAsUpdated(repoUrl, button) {
   } finally {
     button.disabled = false;
     button.textContent = "Update";
+  }
+}
+
+async function deleteEntry(repoUrl, deleteButton) {
+  deleteButton.disabled = true;
+  deleteButton.textContent = "Deleting...";
+
+  try {
+    await invoke("delete_entry", { url: repoUrl });
+    alert(`${repoUrl} deleted.`);
+    loadRepos();
+  } catch (error) {
+    console.error("Error deleting repo:", error);
+    alert("Failed to delete.");
+  } finally {
+    deleteButton.disabled = false;
+    deleteButton.textContent = "Delete";
   }
 }
 
