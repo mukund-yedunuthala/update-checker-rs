@@ -3,7 +3,7 @@ const { load } = window.__TAURI__.store;
 // Function to load and display stored repositories
 async function loadRepos() {
   try {
-    const repos = await invoke("get_stored_repos_wip");
+    const repos = await invoke("get_stored_repos");
     const repoList = document.getElementById("repo-list");
     repoList.innerHTML = ""; // Clear the existing list
 
@@ -51,7 +51,7 @@ async function addRepository() {
     if (isNew) {
       alert(`Repository ${repoUrl} has a newer release.`);
     } else {
-      alert(`Repository ${repoUrl} is already up to date.`);
+      alert(`Repository ${repoUrl} added.`);
     }
     urlInput.value = ""; // Clear input
     loadRepos(); // Refresh list
@@ -67,7 +67,7 @@ async function checkForUpdate(repoUrl, button) {
   button.textContent = "Checking...";
 
   try {
-    const isNew = await invoke("check_for_update_rewrite", { url: repoUrl });
+    const isNew = await invoke("check_for_update", { url: repoUrl });
     // const isNew = await invoke("check_for_update", { url: repoUrl });
     if (isNew) {
       alert(`New update found for ${repoUrl}!`);
