@@ -75,7 +75,16 @@ async fn check_for_update_rewrite(url: String, app: AppHandle) -> Result<bool, S
                     let updated = existing_repo_info.web_version != latest_release;
                     if updated {
                         existing_repo_info.web_version = latest_release.clone();
-                        // save_data(&data);
+                        store.set(
+                            url.clone(),
+                            json!({"value":
+                                RepoInfo {
+                                    url: url.clone(),
+                                    system_version: existing_repo_info.system_version,
+                                    web_version: existing_repo_info.web_version,
+                                }
+                            }),
+                        );
                     }
                     updated
                 }
@@ -168,6 +177,36 @@ fn get_stored_repos(state: State<'_, AppState>) -> Result<Vec<RepoInfo>, String>
 }
 
 #[tauri::command]
+fn get_stored_repos_wip(app: AppHandle) -> Result<Vec<RepoInfo>, String> {
+    let store_obj = app.get_store("repos.json");
+    match store_obj {
+        Some(store) => {
+            let values = store.values();
+            let mut repos_list: Vec<RepoInfo> = Vec::new();
+            for value in values {
+                if let (Some(url), Some(system_version), Some(web_version)) = (
+                    value["value"].get("url").and_then(|v| v.as_str()),
+                    value["value"]
+                        .get("system_version")
+                        .and_then(|v| v.as_str()),
+                    value["value"].get("web_version").and_then(|v| v.as_str()),
+                ) {
+                    repos_list.push(RepoInfo {
+                        url: url.to_string(),
+                        system_version: system_version.to_string(),
+                        web_version: web_version.to_string(),
+                    });
+                } else {
+                    eprintln!("Skipping entry: {:?}", value); // Inspect the value
+                }
+            }
+            Ok(repos_list)
+        }
+        _ => Err("Failed getting list of repos".to_string()),
+    }
+}
+
+#[tauri::command]
 fn mark_as_updated(url: String, state: State<'_, AppState>) -> Result<(), String> {
     let mut data = state.repos.lock().unwrap();
     if let Some(repo) = data.get_mut(&url) {
@@ -212,6 +251,7 @@ pub fn run() {
             check_for_update,
             check_for_update_rewrite,
             get_stored_repos,
+            get_stored_repos_wip,
             mark_as_updated
         ])
         .run(tauri::generate_context!())
